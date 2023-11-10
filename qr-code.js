@@ -10,7 +10,7 @@ router.post("/qrcode", (req, res) => {
     JSON.parse(req.body).connectWith,
   ];
 
-  const qr_url = `http://localhost:8080/mobile/signature/${user_id}/${connectMode}`;
+  const qr_url = `${user_id}/${connectMode}`;
   res.send(JSON.stringify({ data: { qr_url: qr_url } }));
 });
 
