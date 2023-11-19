@@ -53,7 +53,7 @@ router.get("/get-data", (req, res) => {
 
     // 取得對應簽名，移除計時
     if (message.status === "success") clearInterval(keepStream);
-  }, 5000);
+  }, 2500);
 
   // 斷開SSE連線
   req.on("close", () => {
