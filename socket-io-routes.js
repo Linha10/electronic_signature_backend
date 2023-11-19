@@ -21,7 +21,7 @@ const configureSocketIO = (httpServer) => {
 
   // 開啟socket連線
   io.on("connect", async (socket) => {
-    console.log("connect", socket.id);
+    console.log("connect user:", socket.id);
 
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
@@ -33,10 +33,16 @@ const configureSocketIO = (httpServer) => {
     socket.on("join-room", async (room_id) => {
       // 現在房間內有的人數(不包含當前user)
       const inRoomUsers = await io.in(rId).fetchSockets();
+      console.log(`There are/is ${inRoomUsers.length} users in room`);
+      console.log(`The room id is : ${room_id}`);
+
       // 有房間序號 且 房間內使用者多於0
       if (rId.length !== 0 && inRoomUsers.length > 0) {
         socket.join(room_id);
-
+        console.log(`${socket.id} join room: "${room_id}" success !`);
+        console.log(
+          `After the join ,there are ${inRoomUsers.length} users now`
+        );
         const timeoutTime = 60 * 1000;
         setTimeout(() => {
           socket.emit("connect-error", {
@@ -61,7 +67,8 @@ const configureSocketIO = (httpServer) => {
      * @param {String} room_id 房間序號
      */
     socket.on("createRoom", async (room_id) => {
-      console.log("room_id", room_id);
+      console.log(`create room ... , room_id is ${room_id}`);
+      console.log("--------------");
       rId = room_id;
       socket.join(room_id);
     });
@@ -82,6 +89,7 @@ const configureSocketIO = (httpServer) => {
      * 斷開socket連線
      */
     socket.on("disconnect", () => {
+      console.log(`${socket.id} is leaveing the room `);
       socket.disconnect();
     });
   });
