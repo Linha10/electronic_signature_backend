@@ -9,7 +9,7 @@ const { Server } = require("socket.io");
 const configureSocketIO = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: [process.env.FRONTEND || "https://localhost:8080"],
+      origin: "*",
       methods: ["GET", "POST"],
     },
   });
