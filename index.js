@@ -1,7 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const http = require("http").Server(app);
+
+const { createServer } = require("http");
+const { server } = require("socket.io");
+const httpServer = createServer(app);
+// const http = require("http").Server(app);
 
 app.use(cors());
 
@@ -16,8 +20,8 @@ const configureSocketIO = require("./socket-io-routes");
 const apiRoutes = require("./qr-code");
 // 引入SSE 相關api
 const sseRoutes = require("./server-sent-event");
-// 配置Socket.IO
-configureSocketIO(http);
+// 配置Socket.IO // http
+configureSocketIO(httpServer);
 
 // 綁定qr-code api路徑
 app.use("/", apiRoutes);
@@ -29,6 +33,7 @@ const apiPort = 3000;
 // SOCKET port
 const socketPort = 3030;
 
-http.listen(socketPort, () => console.log(`connected ${socketPort}`));
+// http
+httpServer.listen(socketPort, () => console.log(`connected ${socketPort}`));
 
 app.listen(apiPort, () => {});

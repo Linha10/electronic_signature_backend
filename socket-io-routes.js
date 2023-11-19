@@ -9,10 +9,12 @@ const { Server } = require("socket.io");
 const configureSocketIO = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: ["https://localhost:8080", "https://linha10.github.io"],
+      origin: process.env.FRONT || "https://localhost:8080",
       methods: ["GET", "POST"],
     },
   });
+
+  console.log(process.env.FRONT || "https://localhost:8080");
 
   // 房間id
   let rId = "";
