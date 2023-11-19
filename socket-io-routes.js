@@ -19,6 +19,9 @@ const configureSocketIO = (httpServer) => {
 
   // 開啟socket連線
   io.on("connect", async (socket) => {
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
     /**
      * 加入房間
      * @param {String} room_id 房間序號
