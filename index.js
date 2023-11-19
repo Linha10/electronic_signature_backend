@@ -29,7 +29,7 @@ app.use("/", apiRoutes);
 app.use("/sse", sseRoutes);
 
 // API port
-const apiPort = 3000;
+const apiPort = 9000;
 // SOCKET port
 const socketPort = 3030;
 
