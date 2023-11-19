@@ -61,6 +61,7 @@ const configureSocketIO = (httpServer) => {
      * @param {String} room_id 房間序號
      */
     socket.on("createRoom", async (room_id) => {
+      console.log("room_id", room_id);
       rId = room_id;
       socket.join(room_id);
     });

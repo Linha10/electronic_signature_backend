@@ -54,6 +54,8 @@ const apiPort = 9000;
 const socketPort = 3030;
 
 // http
-httpServer.listen(socketPort, () => console.log(`connected ${socketPort}`));
+httpServer.listen(socketPort, () =>
+  console.log(`socket connected ${socketPort}`)
+);
 
 app.listen(apiPort, () => {});
