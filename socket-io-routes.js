@@ -10,8 +10,8 @@ const configureSocketIO = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       origin: [
-        "http://localhost:8080",
-        "https://linha10.github.io/electronic_signature/",
+        "https://localhost:8080",
+        "https://linha10.github.io/electronic_signature",
       ],
       methods: ["GET", "POST"],
     },
