@@ -21,6 +21,8 @@ const configureSocketIO = (httpServer) => {
 
   // 開啟socket連線
   io.on("connect", async (socket) => {
+    console.log("connect", socket.id);
+
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
     });
@@ -70,6 +72,7 @@ const configureSocketIO = (httpServer) => {
      * @param {String} roomId 房間序號
      */
     socket.on("send-signature", ({ image, roomId }) => {
+      console.log("image", image);
       // 派發至指定房間
       io.to(roomId).emit("capture-signature", image);
     });
