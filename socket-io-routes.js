@@ -1,5 +1,9 @@
 const { Server } = require("socket.io");
 
+// 儲存的資料
+const store = {};
+// 房間
+const roomList = [];
 /**
  *  建立socket.io配置
  *
@@ -14,11 +18,6 @@ const configureSocketIO = (httpServer) => {
     },
   });
 
-  console.log(process.env.FRONT || "https://localhost:8080");
-
-  // 房間id
-  let rId = "";
-
   // 開啟socket連線
   io.on("connect", async (socket) => {
     console.log("connect user:", socket.id);
@@ -26,23 +25,19 @@ const configureSocketIO = (httpServer) => {
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
     });
+
     /**
      * 加入房間
      * @param {String} room_id 房間序號
      */
     socket.on("join-room", async (room_id) => {
       // 現在房間內有的人數(不包含當前user)
-      const inRoomUsers = await io.in(rId).fetchSockets();
-      console.log(`There are/is ${inRoomUsers.length} users in room`);
-      console.log(`The room id is : ${room_id}`);
+      const inRoomUsers = await io.in(room_id).fetchSockets();
 
       // 有房間序號 且 房間內使用者多於0
-      if (rId.length !== 0 && inRoomUsers.length > 0) {
+      if (roomList.includes(room_id) && inRoomUsers.length > 0) {
         socket.join(room_id);
-        console.log(`${socket.id} join room: "${room_id}" success !`);
-        console.log(
-          `After the join ,there are ${inRoomUsers.length} users now`
-        );
+
         const timeoutTime = 60 * 1000;
         setTimeout(() => {
           socket.emit("connect-error", {
@@ -67,9 +62,8 @@ const configureSocketIO = (httpServer) => {
      * @param {String} room_id 房間序號
      */
     socket.on("createRoom", async (room_id) => {
-      console.log(`create room ... , room_id is ${room_id}`);
-      console.log("--------------");
-      rId = room_id;
+      roomList.push(room_id);
+      console.log(roomList);
       socket.join(room_id);
     });
 
@@ -80,9 +74,11 @@ const configureSocketIO = (httpServer) => {
      * @param {String} roomId 房間序號
      */
     socket.on("send-signature", ({ image, roomId }) => {
-      console.log("image", image);
-      // 派發至指定房間
-      io.to(roomId).emit("capture-signature", image);
+      if (roomList.includes(roomId)) {
+        store[roomId] = image;
+        // 派發至指定房間
+        io.to(roomId).emit("capture-signature", store[roomId]);
+      }
     });
 
     /**

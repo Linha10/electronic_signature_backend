@@ -1,13 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+app.use(cors());
 
 const { createServer } = require("http");
-// const { server } = require("socket.io");
-const httpServer = createServer(app);
-// const http = require("http").Server(app);
 
-app.use(cors());
+const httpServer = createServer(app);
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.text({ type: "*/*" }));
@@ -33,14 +31,10 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Origin",
     process.env.FRONT || "https://localhost:8080"
   );
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
 
-  // 允许所有预检请求通过
   if (req.method === "OPTIONS") {
     res.sendStatus(200);
   } else {
