@@ -18,8 +18,6 @@ const configureSocketIO = require("./socket-io-routes");
 const apiRoutes = require("./qr-code");
 // 引入SSE 相關api
 const sseRoutes = require("./server-sent-event");
-// 配置Socket.IO // http
-configureSocketIO(httpServer);
 
 // 綁定qr-code api路徑
 app.use("/", apiRoutes);
@@ -49,7 +47,6 @@ const socketPort = 3030;
 
 app.listen(apiPort, () => {});
 
+const io = configureSocketIO(httpServer); // 配置Socket.IO // http
 // http
-httpServer.listen(socketPort, () =>
-  console.log(`socket connected ${socketPort}`)
-);
+io.listen(socketPort, () => console.log(`socket connected ${socketPort}`));
