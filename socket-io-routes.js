@@ -100,6 +100,8 @@ const configureSocketIO = (httpServer) => {
     socket.on("send-signature", ({ image, roomId }) => {
       if (isRoomExists(roomId)) {
         store[roomId] = image;
+        console.log(" store[roomId]", store[roomId]);
+        console.log("roomList[roomId]", roomList[roomId]);
         // 派發至指定房間
         socket.to(roomId).emit("capture-signature", store[roomId]);
       }
