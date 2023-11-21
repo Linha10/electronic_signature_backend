@@ -43,13 +43,13 @@ app.use((req, res, next) => {
 });
 
 // API port
-const apiPort = 9000;
+const apiPort = 443;
 // SOCKET port
 const socketPort = 3030;
+
+app.listen(apiPort, () => {});
 
 // http
 httpServer.listen(socketPort, () =>
   console.log(`socket connected ${socketPort}`)
 );
-
-app.listen(apiPort, () => {});
