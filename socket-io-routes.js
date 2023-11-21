@@ -3,7 +3,29 @@ const { Server } = require("socket.io");
 // 儲存的資料
 const store = {};
 // 房間
-const roomList = [];
+const roomList = {};
+
+// TODO
+class Room {
+  constructor(roomId, creator) {
+    // 房間序號(使用者帳號)
+    this.id = roomId;
+    // 創建者socket id
+    this.creator = creator;
+    // 加入者socket id
+    this.joiner = "";
+  }
+  // 設定加入人員
+  setJoiner(joinerId) {
+    this.joiner = joinerId;
+  }
+  // 是否滿房
+  isRoomFull() {
+    return this.joiner !== "";
+  }
+}
+const isRoomExists = (roomId) => !!roomList[roomId];
+
 /**
  *  建立socket.io配置
  *
@@ -31,13 +53,15 @@ const configureSocketIO = (httpServer) => {
      * @param {String} room_id 房間序號
      */
     socket.on("join-room", async (room_id) => {
-      // 現在房間內有的人數(不包含當前user)
-      const inRoomUsers = await io.in(room_id).fetchSockets();
+      // 取得scoket實例數量
+      const instance = await io.in(room_id).fetchSockets();
+      // 取得房間
+      const theRoom = isRoomExists(room_id) ? roomList[room_id] : null;
+      const isJoinable = !theRoom?.isRoomFull();
 
-      // 有房間序號 且 房間內使用者多於0
-      if (roomList.includes(room_id) && inRoomUsers.length > 0) {
+      if (instance.length > 0 && isJoinable) {
+        theRoom.setJoiner(socket.id);
         socket.join(room_id);
-
         const timeoutTime = 60 * 1000;
         setTimeout(() => {
           socket.emit("connect-error", {
@@ -62,8 +86,8 @@ const configureSocketIO = (httpServer) => {
      * @param {String} room_id 房間序號
      */
     socket.on("createRoom", async (room_id) => {
-      roomList.push(room_id);
-      console.log(roomList);
+      const room = new Room(room_id, socket.id);
+      roomList[room_id] = room;
       socket.join(room_id);
     });
 
@@ -74,7 +98,7 @@ const configureSocketIO = (httpServer) => {
      * @param {String} roomId 房間序號
      */
     socket.on("send-signature", ({ image, roomId }) => {
-      if (roomList.includes(roomId)) {
+      if (isRoomExists(roomId)) {
         store[roomId] = image;
         // 派發至指定房間
         io.to(roomId).emit("capture-signature", store[roomId]);
