@@ -101,7 +101,7 @@ const configureSocketIO = (httpServer) => {
       if (isRoomExists(roomId)) {
         store[roomId] = image;
         // 派發至指定房間
-        io.to(roomId).emit("capture-signature", store[roomId]);
+        socket.to(roomId).emit("capture-signature", store[roomId]);
       }
     });
 
